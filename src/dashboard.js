@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 /* task: create a dashboard page layout
 components to be used:
 - Layout
@@ -10,7 +10,8 @@ components to be used:
 import the necessary components from antd
 */
 
-import { Layout, Menu, Table, Checkbox, Button } from "antd";
+import { Layout, Menu, Table, Button, Grid } from "antd";
+
 import {
   UserOutlined,
   BankOutlined,
@@ -20,6 +21,9 @@ import {
 const { Sider, Content } = Layout;
 
 const { Column } = Table;
+
+const { useBreakpoint } = Grid;
+
 
 const data = [
   {
@@ -46,6 +50,29 @@ const data = [
 ];
 
 const Dashboard = () => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const screens = useBreakpoint();
+  const [collapsed, setCollapsed] = useState(screens.xs);
+
+  useEffect(() => {
+    setCollapsed(screens.xs);
+  }, [screens.xs]);
+
+  const onCollapse = (collapsed) => {
+    setCollapsed(collapsed);
+  };
+
+
+  const onSelectChange = (selectedKeys) => {
+    setSelectedRowKeys(selectedKeys);
+    const result = data.filter((item)=>{return selectedKeys.includes(item.key)})
+    console.log(result)
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
   return (
     <div>
       {/* 
@@ -81,69 +108,60 @@ const Dashboard = () => {
         - color: #ffffff
         - text: "Organization"
 */}
-        <Layout>
-            <Sider
-            style={{
-                minHeight: "100vh",
-                width: "200px",
-                background: "#e3e4e6",
-            }}
-            >
-            <Menu
-                mode="inline"
-                defaultSelectedKeys={["1"]}
-                style={{
-                background: "#e3e4e6",
-                }}
-            >
-                <Menu.Item key="1" icon={<UserOutlined />}>
-                People
-                </Menu.Item>
-                <Menu.Item key="2" icon={<BankOutlined />}>
-                Organizations
-                </Menu.Item>
-                <Menu.Item key="3" icon={<ClockCircleOutlined />}>
-                Contact Timeline
-                </Menu.Item>
-            </Menu>
-            </Sider>
-            <Content
-            style={{
-                background: "#ffffff",
-                padding: "20px",
-                height: "100vh",
-                width: "100%",
-            }}
-            >
-            <Button
-                style={{
-                background: "#2fa866",
-                color: "#ffffff",
-                marginBottom: "20px",
-                }}
-            >
-                Organization
-            </Button>
-            <Table dataSource={data}>
-                <Column
-                title={
-                    <Checkbox/>
-                }
-                dataIndex="name"
-                key="name"
-                render={(text) => <Checkbox />}
-                />
-                <Column title="Name" dataIndex="name" key="name" />
-                <Column title="Label" dataIndex="label" key="label" />
-                <Column title="Address" dataIndex="address" key="address" />
-                <Column title="People" dataIndex="people" key="people" />
-            </Table>
-            </Content>
-        </Layout>
-        
-        
-        
-        
+      <Layout>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={onCollapse}
+        style={{
+          minHeight: screens.xs ? "100vh" : "auto",
+          width: screens.xs ? "100%" : "200px",
+          background: "#e3e4e6",
+        }}
+      >
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={["1"]}
+          style={{
+            background: "#e3e4e6",
+          }}
+        >
+          <Menu.Item key="1" icon={<UserOutlined />}>
+            People
+          </Menu.Item>
+          <Menu.Item key="2" icon={<BankOutlined />}>
+            Organizations
+          </Menu.Item>
+          <Menu.Item key="3" icon={<ClockCircleOutlined />}>
+            Contact Timeline
+          </Menu.Item>
+        </Menu>
+      </Sider>
+      <Content
+        style={{
+          background: "#ffffff",
+          padding: screens.xs ? "10px" : "20px",
+          height: "100vh",
+          width: "100%",
+        }}
+      >
+        <Button
+          style={{
+            background: "#2fa866",
+            color: "#ffffff",
+            marginBottom: screens.xs ? "10px" : "20px",
+          }}
+        >
+          Organization
+        </Button>
+        <Table rowSelection={rowSelection} dataSource={data} scroll={{ x: 'max-content' }}>
+          <Column title="Name" dataIndex="name" key="name" />
+          <Column title="Label" dataIndex="label" key="label" />
+          <Column title="Address" dataIndex="address" key="address" />
+          <Column title="People" dataIndex="people" key="people" />
+        </Table>
+      </Content>
+    </Layout>
     </div>
   );
 };

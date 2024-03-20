@@ -35,22 +35,24 @@ const data = [
 ];
 
 {
-    (
-            <Table dataSource={data}>
-                <Column
-                title={
-                    <Checkbox/>
-                }
-                dataIndex="name"
-                key="name"
-                render={(text) => <Checkbox />}
-                />
-                <Column title="Name" dataIndex="name" key="name" />
-                <Column title="Label" dataIndex="label" key="label" />
-                <Column title="Address" dataIndex="address" key="address" />
-                <Column title="People" dataIndex="people" key="people" />
-            </Table>
-    )
+  <Table rowSelection={rowSelection} dataSource={data}>
+    <Column
+      title={
+        <Checkbox
+          indeterminate={indeterminate}
+          onChange={onCheckAllChange}
+          checked={checkAll}
+        />
+      }
+      dataIndex="name"
+      key="name"
+      render={(text) => <Checkbox />}
+    />
+    <Column title="Name" dataIndex="name" key="name" />
+    <Column title="Label" dataIndex="label" key="label" />
+    <Column title="Address" dataIndex="address" key="address" />
+    <Column title="People" dataIndex="people" key="people" />
+  </Table>;
 }
 
 /*
@@ -66,11 +68,7 @@ const Dashboard = () => {
             backgroundColor: "#e3e4e6",
           }}
         >
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-          >
+          <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1" icon={<UserOutlined />}>
               Dashboard
             </Menu.Item>
@@ -101,5 +99,3 @@ const Dashboard = () => {
     </div>
   );
 };
-
-
